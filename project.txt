@@ -1,0 +1,31 @@
+ string patch = @"D:\MyPoligon\Project3\base.txt";
+            FileStream fileStream = new FileStream(patch,FileMode.Open,FileAccess.Read);
+
+            StreamReader streamReaer = new StreamReader(fileStream,Encoding.GetEncoding(1251));
+
+            string myArray = streamReaer.ReadToEnd();
+            
+            streamReaer.Close();
+            fileStream.Close();
+          
+            string pattern = @"^\d{1,2}\.*\s*\-{1}[a-zA-Zà-ÿA-Z0-9-. ]+|^\D+";
+
+            MatchCollection match = Regex.Matches(myArray,pattern, RegexOptions.Multiline);
+
+            StringBuilder builder = new StringBuilder();
+
+            foreach (var item in match)
+            {
+                builder.Append(Regex.Replace(item.ToString(),
+                    @"(?<var1>^\d{1,2}\.*\s*\-{1}[a-zA-Zà-ÿA-Z0-9-. ]+)|(?<var2>^\D+)",
+                    "${var1} \n ${var2}"));
+            }
+
+
+            FileStream file = new FileStream(@"D:\MyPoligon\Project3\result.txt",FileMode.OpenOrCreate,FileAccess.ReadWrite);
+            StreamWriter streamWriter = new StreamWriter(file);
+
+            streamWriter.Write(builder);
+
+            streamWriter.Close();
+            file.Close();
